@@ -1,11 +1,20 @@
-import * as http from 'http';
-const server = http.createServer((_req, res) => {
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'text/plain');
-  res.end('Hello, World!\n');
-});
-const port = 3000;
-const hostname = "0.0.0.0"
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+import Koa from "koa";
+import Router, {RouterContext} from "koa-router";
+import logger from "koa-logger";
+import json from "koa-json";
+const app: Koa = new Koa();
+const router: Router = new Router();
+const welcomeAPI = async (ctx: RouterContext, next: any) => {
+ ctx.body = {
+ message: "Welcome to the blog API!"
+ };
+ await next();
+}
+router.get('/api/v1', welcomeAPI);
+import {router as articles} from "./routes/articles";
+// Other code statements go here
+app.use(articles.routes());
+app.use(logger());
+app.use(json());
+app.use(router.routes());
+app.listen(10888);
